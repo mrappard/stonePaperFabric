@@ -141,7 +141,7 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	}
 	timerValue := time.Now()
 	TimeV := timerValue.String()
-	username, _ := GetCertAttribute(stub, "username")
+	username, _ := GetCertAttribute(stub, "affiliation")
 	Creator := username
 
 
