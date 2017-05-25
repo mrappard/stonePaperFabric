@@ -6,6 +6,7 @@ import (
 	"time"
 	"errors"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"github.com/hyperledger/fabric/core/chaincode/shim/crypto/attr"
 
 )
 
@@ -34,9 +35,34 @@ func main() {
 	}
 }
 
+
+func (t *StonePaperChaincode) setStateToAttributes(stub shim.ChaincodeStubInterface, args []string) error {
+	attrHandler, err := attr.NewAttributesHandlerImpl(stub)
+	if err != nil {
+		return err
+	}
+	for _, att := range args {
+		fmt.Println("Writing attribute " + att)
+		attVal, err := attrHandler.GetValue(att)
+		if err != nil {
+			return err
+		}
+		err = stub.PutState(att, attVal)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+
 // Init initializes chaincode
 // ===========================
 func (t *StonePaperChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	err := t.setStateToAttributes(stub, args)
+	if err != nil {
+		return nil, err
+	}
 	return nil, nil
 }
 
