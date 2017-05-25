@@ -92,11 +92,19 @@ func (t *StonePaperChaincode) Query(stub shim.ChaincodeStubInterface, function s
 }
 
 
-
+func GetCertAttribute(stub shim.ChaincodeStubInterface, attributeName string) (string, error) {
+ fmt.Println("Entering GetCertAttribute")
+ attr, err := stub.ReadCertAttribute(attributeName)
+ if err != nil {
+ return "", errors.New("Couldn't get attribute " + attributeName + ". Error: " + err.Error())
+ }
+ attrString := string(attr)
+ return attrString, nil
+}
 
 
 // ============================================================
-// initMarble - create a new marble, store into chaincode state
+// initStonepaper - create a paper, store into chaincode state
 // ============================================================
 func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
@@ -133,7 +141,8 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	}
 	timerValue := time.Now()
 	TimeV := timerValue.String()
-	Creator := "Test"//stub.GetCreator()
+	username, _ := GetCertAttribute(stub, "username")
+	Creator := username
 
 
 	// ==== Check if doc with matching hash exists already exists ====
