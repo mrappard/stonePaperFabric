@@ -102,7 +102,7 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	var err error
 	//   0       	1       		2     					3
 	// "DocHash", "Database", "SubContract", "ContractType"
-	if len(args) != 4 {
+	if len(args) != 5 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 4")
 	}
 
@@ -121,6 +121,10 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 		return nil, errors.New("4th argument must be a non-empty string")
 	}
 
+	if len(args[4]) <= 0 {
+		return nil, errors.New("4th argument must be a non-empty string")
+	}
+
 	DocHash := args[0]
 	Database, err := strconv.Atoi(args[1])
 	if err != nil {
@@ -133,7 +137,7 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	}
 	timerValue := time.Now()
 	TimeV := timerValue.String()
-	Creator := "Test"//stub.GetCreator()
+	Creator := args[4]//stub.GetCreator()
 
 
 	// ==== Check if doc with matching hash exists already exists ====
