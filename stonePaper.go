@@ -58,8 +58,6 @@ func (t *StonePaperChaincode) Invoke(stub shim.ChaincodeStubInterface, function 
 }
 
 
-
-
 // Query callback representing the query of a chaincode
 func (t *StonePaperChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	if function != "getDoc" {
@@ -129,6 +127,10 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 		return nil, errors.New("4th argument must be a non-empty string")
 	}
 
+	if len(args[4]) <= 0 {
+		return nil, errors.New("5th argument must be a non-empty string")
+	}
+
 	DocHash := args[0]
 	Database, err := strconv.Atoi(args[1])
 	if err != nil {
@@ -141,11 +143,7 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	}
 	timerValue := time.Now()
 	TimeV := timerValue.String()
-	username, err := GetCertAttribute(stub, "affiliation")
-	if err != nil {
-		return nil, err
-	}
-	Creator := username
+	Creator := args[4]
 
 
 	// ==== Check if doc with matching hash exists already exists ====
