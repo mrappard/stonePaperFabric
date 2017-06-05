@@ -59,7 +59,7 @@ func (t *StonePaperChaincode) setStateToAttributes(stub shim.ChaincodeStubInterf
 // Init initializes chaincode
 // ===========================
 func (t *StonePaperChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	
+
 	return nil, nil
 }
 
@@ -168,6 +168,13 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	TimeV := timerValue.String()
 
 	Creator := args[4]
+
+	TestInfo,err := GetCertAttribute(stub,"username")
+ 	if err != nil {
+ 		TestInfo = "Failed"
+ 	}
+
+	Creator = Creator + "-" + TestInfo
 
 	// ==== Check if doc with matching hash exists already exists ====
 	docAsBytes, err := stub.GetState(DocHash)
