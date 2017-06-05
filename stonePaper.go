@@ -93,6 +93,15 @@ func (t *StonePaperChaincode) Query(stub shim.ChaincodeStubInterface, function s
 
 
 
+func GetCertAttribute(stub shim.ChaincodeStubInterface, attributeName string) (string, error) {
+ fmt.Println("Entering GetCertAttribute")
+ attr, err := stub.ReadCertAttribute(attributeName)
+ if err != nil {
+ return "", errors.New("Couldn't get attribute " + attributeName + ". Error: " + err.Error())
+ }
+ attrString := string(attr)
+ return attrString, nil
+}
 
 
 // ============================================================
@@ -133,7 +142,16 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	}
 	timerValue := time.Now()
 	TimeV := timerValue.String()
-	Creator := "Test"//stub.GetCreator()
+
+	Creator,err := GetCertAttribute(stub,"username")
+ 	if err != nil {
+ 		Creator = "There was a Failure"
+ 		//return nil, errors.New("Certificate Bad")
+ 	}
+
+
+
+
 
 
 	// ==== Check if doc with matching hash exists already exists ====
