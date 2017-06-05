@@ -135,7 +135,7 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	//   0       	1       		2     					3
 	// "DocHash", "Database", "SubContract", "ContractType"
 	if len(args) != 5 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 4")
+		return nil, errors.New("Incorrect number of arguments. Expecting 5")
 	}
 
 	// ==== Input sanitation ====
