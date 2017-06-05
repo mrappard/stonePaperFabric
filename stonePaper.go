@@ -172,7 +172,8 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 
 	Creator,err := GetCertAttribute(stub,"username")
 	if err != nil {
-		return nil, errors.New("Certificate Bad")
+		Creator = "There was a Failure"
+		//return nil, errors.New("Certificate Bad")
 	}
 
 
