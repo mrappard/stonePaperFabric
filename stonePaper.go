@@ -6,7 +6,6 @@ import (
 	"time"
 	"errors"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/hyperledger/fabric/core/chaincode/shim/crypto/attr"
 
 )
 
@@ -35,31 +34,9 @@ func main() {
 	}
 }
 
-
-func (t *StonePaperChaincode) setStateToAttributes(stub shim.ChaincodeStubInterface, args []string) error {
-	attrHandler, err := attr.NewAttributesHandlerImpl(stub)
-	if err != nil {
-		return err
-	}
-	for _, att := range args {
-		fmt.Println("Writing attribute " + att)
-		attVal, err := attrHandler.GetValue(att)
-		if err != nil {
-			return err
-		}
-		err = stub.PutState(att, attVal)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-
 // Init initializes chaincode
 // ===========================
 func (t *StonePaperChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-
 	return nil, nil
 }
 
@@ -79,6 +56,8 @@ func (t *StonePaperChaincode) Invoke(stub shim.ChaincodeStubInterface, function 
 	fmt.Println("invoke did not find func: " + function) //error
 	return nil, errors.New("Received unknown function invocation")
 }
+
+
 
 
 // Query callback representing the query of a chaincode
@@ -113,26 +92,18 @@ func (t *StonePaperChaincode) Query(stub shim.ChaincodeStubInterface, function s
 }
 
 
-func GetCertAttribute(stub shim.ChaincodeStubInterface, attributeName string) (string, error) {
- fmt.Println("Entering GetCertAttribute")
- attr, err := stub.ReadCertAttribute(attributeName)
- if err != nil {
- return "", errors.New("Couldn't get attribute " + attributeName + ". Error: " + err.Error())
- }
- attrString := string(attr)
- return attrString, nil
-}
+
 
 
 // ============================================================
-// initStonepaper - create a paper, store into chaincode state
+// initMarble - create a new marble, store into chaincode state
 // ============================================================
 func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
 	//   0       	1       		2     					3
 	// "DocHash", "Database", "SubContract", "ContractType"
 	if len(args) != 5 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 5")
+		return nil, errors.New("Incorrect number of arguments. Expecting 4")
 	}
 
 	// ==== Input sanitation ====
@@ -151,7 +122,7 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	}
 
 	if len(args[4]) <= 0 {
-		return nil, errors.New("5th argument must be a non-empty string")
+		return nil, errors.New("4th argument must be a non-empty string")
 	}
 
 	DocHash := args[0]
@@ -166,17 +137,9 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	}
 	timerValue := time.Now()
 	TimeV := timerValue.String()
+	Creator := args[4]//stub.GetCreator()
 
-	Creator := args[4]
 
-/*
-	TestInfo,err := GetCertAttribute(stub,"username")
- 	if err != nil {
- 		TestInfo = "Failed " + err.Error()
- 	}
-
-	Creator = Creator + "-" + TestInfo
-*/
 	// ==== Check if doc with matching hash exists already exists ====
 	docAsBytes, err := stub.GetState(DocHash)
 	if err != nil {
