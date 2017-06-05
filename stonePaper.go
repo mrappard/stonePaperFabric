@@ -169,13 +169,14 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 
 	Creator := args[4]
 
+/*
 	TestInfo,err := GetCertAttribute(stub,"username")
  	if err != nil {
  		TestInfo = "Failed " + err.Error()
  	}
 
 	Creator = Creator + "-" + TestInfo
-
+*/
 	// ==== Check if doc with matching hash exists already exists ====
 	docAsBytes, err := stub.GetState(DocHash)
 	if err != nil {
