@@ -9,6 +9,7 @@ import (
 
 )
 
+var logger = shim.NewLogger("mylogger")
 
 type stonePaper struct {
 	DocHash 			string `json:"docHash"`
@@ -28,6 +29,13 @@ type StonePaperChaincode struct {
 // Main
 // ===================================================================================
 func main() {
+
+	lld, _ := shim.LogLevel("DEBUG")
+	fmt.Println(lld)
+
+	logger.SetLevel(lld)
+	fmt.Println(logger.IsEnabledFor(lld))
+
 	err := shim.Start(new(StonePaperChaincode))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
