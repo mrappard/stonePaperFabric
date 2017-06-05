@@ -59,10 +59,7 @@ func (t *StonePaperChaincode) setStateToAttributes(stub shim.ChaincodeStubInterf
 // Init initializes chaincode
 // ===========================
 func (t *StonePaperChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	err := t.setStateToAttributes(stub, args)
-	if err != nil {
-		return nil, err
-	}
+	
 	return nil, nil
 }
 
