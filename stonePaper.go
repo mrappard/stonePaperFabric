@@ -170,12 +170,7 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 	timerValue := time.Now()
 	TimeV := timerValue.String()
 
-	Creator,err := GetCertAttribute(stub,"username")
-	if err != nil {
-		Creator = "There was a Failure"
-		//return nil, errors.New("Certificate Bad")
-	}
-
+	Creator := args[4]
 
 	// ==== Check if doc with matching hash exists already exists ====
 	docAsBytes, err := stub.GetState(DocHash)
@@ -186,11 +181,22 @@ func (t *StonePaperChaincode) createDoc(stub shim.ChaincodeStubInterface, args [
 		return nil, errors.New("This Hash already exists: " + DocHash)
 	}
 
+/*
+	// ==== Create stonePaper object and marshal to JSON ====
+	objectType := "stonePaper"
+	marble := &stonePaper{DocHash, Database, TimeV, Creator, SubContract, ContractType}
+	marbleJSONasBytes, err := json.Marshal(marble)
+	if err != nil {
+		return nil, errors.New(err.Error())
+	}
+	*/
 
 	stonePaperJSONasString := `{"DocHash":"`+DocHash+`","Database":`+strconv.Itoa(Database)+`,"Time":"`+TimeV+`","Creator":"`+Creator+`","SubContract": "`+SubContract+`","ContractType":`+strconv.Itoa(ContractType)+`}`
 	stonePaperJSONasBytes := []byte(stonePaperJSONasString)
 
-
+	//Alternatively, build the marble json string manually if you don't want to use struct marshalling
+	//marbleJSONasString := `{"docType":"Marble",  "name": "` + marbleName + `", "color": "` + color + `", "size": ` + strconv.Itoa(size) + `, "owner": "` + owner + `"}`
+	//marbleJSONasBytes := []byte(str)
 
 	// === Save marble to state ===
 	err = stub.PutState(DocHash, stonePaperJSONasBytes)
